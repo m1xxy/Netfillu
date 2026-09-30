@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>NetFilla - Premium Cinematic Experience | پریمیئم سنیما</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Premium Fonts: Inter for English, Noto Nastaliq Urdu for Shahmukhi Punjabi -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-red: #E50914;
+            --bg-dark: #000000;
+            --apple-ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body, html {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Shahmukhi / Nastaliq Font Utility */
+        .nastaliq {
+            font-family: 'Noto Nastaliq Urdu', serif;
+            direction: rtl;
+            line-height: 1.8; /* Nastaliq requires taller line-height */
+            padding-bottom: 8px; /* Prevents clipping at the bottom */
+        }
+
+        /* Splash Screen Animations */
+        #splash-screen {
+            transition: opacity 1s ease-in-out, visibility 1s;
+        }
+        .intro-text {
+            animation: pulse-glow 2s infinite alternate;
+        }
+        @keyframes pulse-glow {
+            0% { text-shadow: 0 0 20px rgba(229, 9, 20, 0.2); transform: scale(0.98); }
+            100% { text-shadow: 0 0 50px rgba(229, 9, 20, 0.8); transform: scale(1.02); }
+        }
+
+        /* iOS Glassmorphism Utilities */
+        .glass-dock {
+            background: rgba(20, 20, 22, 0.45);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            border-radius: 40px;
+        }
+
+        .glass-card {
+            background: linear-gradient(180deg, rgba(30, 30, 32, 0.5) 0%, rgba(15, 15, 15, 0.6) 100%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+            border-radius: 32px;
+            transition: transform 0.5s var(--apple-ease), border-color 0.5s var(--apple-ease);
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(229, 9, 20, 0.3);
+        }
+
+        /* Buttons */
+        .btn-premium-red {
+            background: linear-gradient(135deg, #FF1E27 0%, #B80009 100%);
+            box-shadow: 0 15px 30px rgba(229, 9, 20, 0.3), inset 0 2px 4px rgba(255,255,255,0.3);
+            transition: all 0.4s var(--apple-ease);
+        }
+        .btn-premium-red:hover {
+            box-shadow: 0 20px 40px rgba(229, 9, 20, 0.5), inset 0 2px 4px rgba(255,255,255,0.4);
+            transform: translateY(-2px);
+        }
+        .btn-premium-red:active { transform: scale(0.96); }
+
+        .btn-glass {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+            transition: all 0.4s var(--apple-ease);
+        }
+        .btn-glass:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        .btn-glass:active { transform: scale(0.96); }
+
+        /* Marquee Animations */
+        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes scrollRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
+        
+        .animate-marquee-left { display: flex; width: max-content; animation: scrollLeft 35s linear infinite; }
+        .animate-marquee-right { display: flex; width: max-content; animation: scrollRight 35s linear infinite; }
+
+        /* Background Pan */
+        @keyframes subtlePan { 0% { transform: scale(1.05) translate(0, 0); } 100% { transform: scale(1.15) translate(-2%, -2%); } }
+        .bg-poster-grid {
+            position: absolute; width: 120%; height: 120%; top: -10%; left: -10%;
+            display: flex; flex-wrap: wrap; gap: 8px; opacity: 0.15;
+            animation: subtlePan 30s ease-in-out infinite alternate; pointer-events: none; z-index: 1;
+        }
+
+        /* Text Gradients */
+        .text-gradient-red { background: linear-gradient(135deg, #FF4B52 0%, #E50914 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* Reveal Animation */
+        .reveal { opacity: 0; transform: translateY(40px) scale(0.95); transition: all 1s var(--apple-ease); }
+        .reveal.active { opacity: 1; transform: translateY(0) scale(1); }
+        
+        ::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="selection:bg-[#E50914] selection:text-white relative">
+
+    <!-- INTRO SPLASH SCREEN -->
+    <div id="splash-screen" class="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center">
+        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" class="mb-4 intro-text">
+            <path d="M4 4L9 20L15 4L20 20" stroke="#E50914" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h1 class="font-black text-4xl tracking-tighter text-white intro-text">NETFILLA</h1>
+        <p class="nastaliq text-[#E50914] font-bold mt-2 text-xl intro-text">پریمیئم سنیما</p>
+    </div>
+
+    <!-- MAIN APP WRAPPER -->
+    <div id="main-content" class="opacity-0 transition-opacity duration-1000">
+
+        <!-- HERO SECTION (Perfectly Centered) -->
+        <section class="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden">
+            
+            <!-- Live Background Grid & Vignette -->
+            <div class="bg-poster-grid" id="bg-posters"></div>
+            <div class="absolute inset-0 z-10 bg-[radial-gradient(circle_at_center,transparent_0%,var(--bg-dark)_90%)] pointer-events-none"></div>
+            <div class="absolute inset-0 z-10 backdrop-blur-[10px] bg-gradient-to-b from-black/40 via-black/70 to-black pointer-events-none"></div>
+
+            <!-- Global Header -->
+            <header class="absolute top-0 w-full z-50 pt-safe px-6 py-6 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#E50914" stroke-width="3" stroke-linecap="round">
+                        <path d="M4 4L9 20L15 4L20 20"/>
+                    </svg>
+                    <span class="font-bold text-lg tracking-tight text-white drop-shadow-md">NetFilla</span>
+                </div>
+                <a href="#downloads" class="nastaliq font-bold text-white/70 hover:text-white transition-colors text-sm pt-2">ایپ ڈاؤنلوڈ کرو</a>
+            </header>
+
+            <!-- 1. TITLES -->
+            <div class="relative z-30 text-center w-full max-w-4xl px-4 mt-8">
+                <h1 class="font-extrabold text-[8vw] sm:text-6xl md:text-7xl text-white mb-2 tracking-tighter leading-none drop-shadow-2xl">
+                    UNLIMITED <span class="text-gradient-red">CINEMA.</span>
+                </h1>
+                <h2 class="nastaliq text-4xl md:text-5xl font-bold text-white/90 drop-shadow-lg mb-8">
+                    لامحدود تفریح، <span class="text-[#FF4B52]">سِرا پرنٹ</span>
+                </h2>
+            </div>
+
+            <!-- 2. SCROLLING MARQUEE POSTERS -->
+            <div class="relative z-30 w-full overflow-hidden flex flex-col gap-4 mb-10 mt-2">
+                <!-- Edges fade -->
+                <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-black to-transparent z-40 pointer-events-none"></div>
+                <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-black to-transparent z-40 pointer-events-none"></div>
+                
+                <!-- Track 1 (Left) -->
+                <div class="animate-marquee-left gap-4 ml-10" id="marquee-1">
+                    <div class="text-gray-500 py-4 nastaliq">پوسٹر لوڈ ہو رہے نیں... (Loading)</div>
+                </div>
+                <!-- Track 2 (Right) -->
+                <div class="animate-marquee-right gap-4 mr-10" id="marquee-2"></div>
+            </div>
+            
+            <!-- 3. CENTERED DOWNLOAD DOCK -->
+            <div class="relative z-30 flex justify-center w-full px-5">
+                <div id="downloads" class="glass-dock p-3 md:p-4 flex flex-col sm:flex-row items-center justify-center gap-3 w-full sm:w-auto">
+                    
+                    <!-- Primary Button (NetFilla) -->
+                    <a href="https://www.mediafire.com/file/8xf7om197soioht/NetFilla_1.0.apk/file" target="_blank" 
+                       class="btn-premium-red w-full sm:w-auto px-8 py-3.5 rounded-[28px] flex items-center justify-center gap-4 group">
+                        <div class="flex flex-col text-left mr-2 pt-1">
+                            <span class="font-bold text-white text-[16px] leading-none mb-2">Get NetFilla 1.0</span>
+                            <span class="nastaliq text-white/90 text-[14px] font-bold leading-none">مفت ڈاؤنلوڈ کرو</span>
+                        </div>
+                        <div class="bg-white/20 p-2 rounded-full group-hover:scale-110 transition-transform">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        </div>
+                    </a>
+
+                    <!-- Secondary Button (MovieBox) -->
+                    <a href="https://www.mediafire.com/file/l84tpcjlvblowqn/MovieBox_4.0.02.0903.02.apk/file" target="_blank" 
+                       class="btn-glass w-full sm:w-auto px-8 py-3.5 rounded-[28px] flex items-center justify-center gap-4 group">
+                        <div class="flex flex-col text-left mr-2 pt-1">
+                            <span class="font-bold text-white text-[16px] leading-none mb-2">MovieBox Pro</span>
+                            <span class="nastaliq text-white/70 text-[14px] font-bold leading-none">پریمیئم ورژن</span>
+                        </div>
+                        <div class="bg-white/10 p-2 rounded-full group-hover:scale-110 transition-transform">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- REVIEWS SECTION -->
+        <section class="py-24 px-6 relative z-20 bg-black border-t border-white/5">
+            <div class="max-w-6xl mx-auto">
+                
+                <div class="text-center mb-16 reveal">
+                    <h2 class="font-bold text-4xl text-white mb-4">User Reviews</h2>
+                    <h3 class="nastaliq text-2xl text-gray-400">لوکاں دی رائے</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Review 1 -->
+                    <div class="glass-card p-8 reveal">
+                        <div class="flex text-[#FF4B52] mb-4">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </div>
+                        <p class="font-medium text-gray-300 mb-3 text-[15px]">"This app is absolutely amazing! No buffering at all."</p>
+                        <p class="nastaliq text-white font-bold text-[18px]">"کمال دی ایپ اے، مزہ آ گیا۔"</p>
+                        <div class="mt-6 font-bold text-sm text-gray-500">— Ali Raza</div>
+                    </div>
+
+                    <!-- Review 2 -->
+                    <div class="glass-card p-8 reveal" style="transition-delay: 150ms;">
+                        <div class="flex text-[#FF4B52] mb-4">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </div>
+                        <p class="font-medium text-gray-300 mb-3 text-[15px]">"Best 4K streaming quality I have seen on mobile."</p>
+                        <p class="nastaliq text-white font-bold text-[18px]">"پرنٹ بہت کمال دا اے۔ سِرا گل بات!"</p>
+                        <div class="mt-6 font-bold text-sm text-gray-500">— Gurpreet Singh</div>
+                    </div>
+
+                    <!-- Review 3 -->
+                    <div class="glass-card p-8 reveal" style="transition-delay: 300ms;">
+                        <div class="flex text-[#FF4B52] mb-4">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        </div>
+                        <p class="font-medium text-gray-300 mb-3 text-[15px]">"Zero ads and premium content for free. Highly recommend."</p>
+                        <p class="nastaliq text-white font-bold text-[18px]">"سب توں گھینٹ ایپ! کوئی اشتہار نہیں۔"</p>
+                        <div class="mt-6 font-bold text-sm text-gray-500">— Sarah T.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PREMIUM FEATURES SECTION -->
+        <section class="py-24 px-6 relative z-20 bg-black">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                <div class="glass-card p-10 reveal flex flex-col items-center text-center">
+                    <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/10">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E50914" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="4" ry="4"></rect><line x1="7" y1="2" x2="7" y2="22"></line></svg>
+                    </div>
+                    <h4 class="font-bold text-lg text-white mb-2">Massive Library</h4>
+                    <p class="nastaliq text-gray-400 font-bold text-[18px]">وڈی لائبریری، نویں فلماں</p>
+                </div>
+
+                <div class="glass-card p-10 reveal flex flex-col items-center text-center" style="transition-delay: 150ms;">
+                    <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/10">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E50914" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="4" ry="4"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
+                    </div>
+                    <h4 class="font-bold text-lg text-white mb-2">4K Ultra HD</h4>
+                    <p class="nastaliq text-gray-400 font-bold text-[18px]">فل ایچ-ڈی تے فور-کے رزلٹ</p>
+                </div>
+
+                <div class="glass-card p-10 reveal flex flex-col items-center text-center" style="transition-delay: 300ms;">
+                    <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/10">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#E50914" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
+                    <h4 class="font-bold text-lg text-white mb-2">Zero Ads</h4>
+                    <p class="nastaliq text-gray-400 font-bold text-[18px]">بغیر کسے اشتہار توں</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="bg-black py-8 border-t border-white/10 relative z-20">
+            <div class="max-w-6xl mx-auto px-6 flex flex-col items-center gap-2">
+                <span class="font-bold text-lg text-white tracking-tight opacity-50">NetFilla</span>
+                <p class="text-gray-600 text-xs font-medium tracking-wide">© 2024 NetFilla Premium. All rights reserved.</p>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- JAVASCRIPT: Splash Screen, Live Posters & Reveals -->
+    <script>
+        // Splash Screen Logic
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const main = document.getElementById('main-content');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    main.style.opacity = '1';
+                }, 1000);
+            }, 2500); // Intro lasts 2.5 seconds
+        });
+
+        // Fetch Live Posters for Marquee and Background
+        const API_KEY = "15d2ea6d0dc1d476efbca3eba2b9bbfb"; 
+        const BASE_IMG_URL = "https://image.tmdb.org/t/p/w500";
+
+        async function loadPosters() {
+            try {
+                const res = await fetch(`https://api.themoviedb.org/3/trending/all/week?api_key=${API_KEY}`);
+                const data = await res.json();
+                const posters = data.results.map(item => item.poster_path).filter(Boolean);
+                
+                // 1. Background Grid
+                const bgGrid = document.getElementById('bg-posters');
+                bgGrid.innerHTML = '';
+                for (let i = 0; i < 40; i++) {
+                    const img = document.createElement('img');
+                    img.src = BASE_IMG_URL + posters[i % posters.length];
+                    img.className = "w-[25vw] sm:w-[160px] aspect-[2/3] object-cover rounded-xl shadow-2xl brightness-50 contrast-125 mix-blend-screen";
+                    bgGrid.appendChild(img);
+                }
+
+                // 2. Foreground Marquees
+                const populateMarquee = (trackId) => {
+                    const track = document.getElementById(trackId);
+                    let shuffled = [...posters].sort(() => 0.5 - Math.random());
+                    const fullList = [...shuffled, ...shuffled, ...shuffled]; // Duplicate for seamless scroll
+                    
+                    let html = '';
+                    fullList.forEach(path => {
+                        html += `<div class="w-[100px] md:w-[130px] aspect-[2/3] flex-shrink-0 rounded-2xl overflow-hidden border border-white/20 shadow-2xl relative">
+                                    <img src="${BASE_IMG_URL}${path}" class="w-full h-full object-cover">
+                                 </div>`;
+                    });
+                    track.innerHTML = html;
+                };
+
+                populateMarquee('marquee-1');
+                populateMarquee('marquee-2');
+
+            } catch(e) { console.log("API fetch failed."); }
+        }
+
+        loadPosters();
+
+        // Scroll Reveal Observer
+        const revealElements = document.querySelectorAll('.reveal');
+        const observerOptions = { threshold: 0.2, rootMargin: "0px 0px -50px 0px" };
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) { entry.target.classList.add('active'); }
+            });
+        }, observerOptions);
+        revealElements.forEach(el => revealObserver.observe(el));
+    </script>
+</body>
+</html>
